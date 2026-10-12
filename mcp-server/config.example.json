@@ -1,0 +1,10 @@
+{
+  "allowed_schema": "public",
+  "allowed_tables": [
+    "departments",
+    "modules",
+    "module_department",
+    "form_systems",
+    "form_fields"
+  ]
+}
