@@ -1,8 +1,8 @@
 .env
-.venv/
 .env.example
+.venv/
 __pycache__/
 *.pyc
 .idea/
 .vscode/
-mcp-server/config.json
+mcp_server/config.json
