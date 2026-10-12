@@ -117,20 +117,28 @@ def validate_read_only_sql(sql: str) -> str:
     # Extract table names from FROM and JOIN clauses
     # This is a basic check; it may not catch all edge cases
     from_pattern = re.compile(
-        r"(?:from|join)\s+(?:\"?([^\s\"]+)\"?\.?)?\"?([^\s\"]+)\"?",
+        r"(?:from|join)\s+(?:([^\s]+)\.)?([^\s]+)",
         re.IGNORECASE,
     )
 
     for match in from_pattern.finditer(sql):
-        schema = match.group(1) or ALLOWED_SCHEMA
+        schema = match.group(1)
         table = match.group(2)
 
+        # Remove quotes and trailing characters
+        if table:
+            table = table.replace('"', '').replace("'", '').rstrip(',;')
+
+        if schema:
+            schema = schema.replace('"', '').replace("'", '')
+
+        # Skip system schemas
         if table and table.lower() not in {
             "information_schema",
             "pg_catalog",
         }:
             validate_table_access(
-                schema.lower(),
+                (schema or ALLOWED_SCHEMA).lower(),
                 table.lower(),
             )
 

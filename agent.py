@@ -37,7 +37,7 @@ def convert_mcp_tools(
                 "description":
                     tool.description or "",
 
-                "parameters": tool.inputSchema,
+                "parameters": tool.input_schema,
             }
         )
 
@@ -255,31 +255,33 @@ async def main():
                             )
                         )
 
-                        if (
-                            result.structuredContent
-                        ):
-
-                            output = (
-                                result.structuredContent
-                            )
-
-                        else:
+                        if hasattr(
+                            result,
+                            "content",
+                        ) and result.content:
 
                             output = {}
 
-                            for item in (
-                                result.content
-                                or []
-                            ):
+                            for item in result.content:
 
                                 if hasattr(
                                     item,
                                     "text",
                                 ):
 
-                                    output = (
-                                        item.text
-                                    )
+                                    output = item.text
+                                    break
+
+                            if not output and isinstance(
+                                result.content[0],
+                                dict,
+                            ):
+
+                                output = result.content[0]
+
+                        else:
+
+                            output = {}
 
                     except Exception as exc:
 
