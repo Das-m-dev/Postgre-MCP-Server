@@ -12,7 +12,25 @@ A Model Context Protocol (MCP) server that provides read-only access to PostgreS
 
 ## Setup
 
-### 1. Install Dependencies
+### 1. Create Virtual Environment
+
+```bash
+python -m venv .venv
+```
+
+### 2. Activate Virtual Environment
+
+**Windows:**
+```bash
+.venv\Scripts\activate
+```
+
+**Linux/Mac:**
+```bash
+source .venv/bin/activate
+```
+
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -108,7 +126,7 @@ The server provides three tools:
 ├── agent.py                          # LLM agent client
 ├── llm/
 │   └── gemini.py                     # Gemini LLM integration
-├── mcp-server/
+├── mcp_server/
 │   ├── server.py                     # MCP server implementation
 │   ├── config.json                   # Security configuration (gitignored)
 │   └── config.example.json           # Example configuration
