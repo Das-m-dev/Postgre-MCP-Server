@@ -4,6 +4,7 @@ import os
 from typing import Any
 
 from dotenv import load_dotenv
+from google.genai import errors
 from mcp import Client
 from mcp import StdioServerParameters
 
@@ -128,6 +129,9 @@ async def main():
             if not question:
                 continue
 
+            # Snapshot so a failed turn can be rolled back
+            history_len = len(messages)
+
             messages.append(
                 {
                     "role": "user",
@@ -145,10 +149,28 @@ async def main():
 
             while True:
 
-                response = llm.generate(
-                    messages,
-                    tools,
-                )
+                try:
+                    response = llm.generate(
+                        messages,
+                        tools,
+                    )
+                except errors.APIError as exc:
+                    print(
+                        f"\nLLM unavailable "
+                        f"({getattr(exc, 'code', '?')}). "
+                        f"Please try again in a moment.\n"
+                    )
+                    del messages[history_len:]
+                    break
+
+                if not response.candidates:
+                    print(
+                        "\nNo response from the model "
+                        "(possibly blocked). "
+                        "Try rephrasing.\n"
+                    )
+                    del messages[history_len:]
+                    break
 
                 candidate = (
                     response.candidates[0]
